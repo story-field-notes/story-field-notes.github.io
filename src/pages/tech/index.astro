@@ -1,0 +1,10 @@
+---
+import { getCollection } from "astro:content";
+import PostList from "../../layouts/PostList.astro";
+
+const posts = (await getCollection("tech")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<PostList posts={posts} basePath="tech" />

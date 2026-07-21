@@ -1,0 +1,381 @@
+:root {
+  --pop-ink: #15131f;
+  --pop-bg: #ececfb;
+  --pop-peri: #9999ee;
+  --pop-peri-deep: #6b6bd6;
+  --pop-yellow: #ffe34d;
+  --pop-cream: #fff9b2;
+  --pop-blue: #2337ff;
+  --font-pop: "M PLUS Rounded 1c", "UD Digi Kyokasho NK-R", "Ubuntu", "Atkinson", sans-serif;
+  --shadow-pop: 5px 5px 0 var(--pop-ink);
+  --shadow-pop-lg: 8px 8px 0 var(--pop-ink);
+  --shadow-pop-sm: 3px 3px 0 var(--pop-ink);
+  /* legacy compat */
+  --accent: var(--pop-blue);
+  --box-shadow: var(--shadow-pop);
+}
+
+@font-face {
+  font-family: "Atkinson";
+  src: url("/fonts/atkinson-regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Atkinson";
+  src: url("/fonts/atkinson-bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; }
+/* 旧 Tailwind Preflight 由来の svg 既定を明示。mjx-container の svg は下で inline-block に上書きする */
+svg { display: block; }
+
+body {
+  background-color: var(--pop-bg);
+  background-image:
+    linear-gradient(rgba(153,153,238,.7) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(153,153,238,.7) 1.5px, transparent 1.5px),
+    linear-gradient(rgba(153,153,238,.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(153,153,238,.25) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+  font-family: var(--font-pop);
+  color: var(--pop-ink);
+  font-size: 16px;
+  line-height: 1.7;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ---- building blocks ------------------------------------------------- */
+.sticker {
+  background: #fff;
+  border: 3px solid var(--pop-ink);
+  border-radius: 26px;
+  box-shadow: var(--shadow-pop);
+}
+
+.pop-btn {
+  font-family: var(--font-pop);
+  font-weight: 800;
+  font-size: 17px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 26px;
+  border-radius: 999px;
+  border: 3px solid var(--pop-ink);
+  background: var(--pop-yellow);
+  color: var(--pop-ink);
+  box-shadow: var(--shadow-pop);
+  transition: transform .12s ease, box-shadow .12s ease;
+  text-decoration: none;
+}
+.pop-btn:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-pop-lg); }
+.pop-btn:active { transform: translate(5px,5px); box-shadow: 0 0 0 var(--pop-ink); }
+.pop-btn.blue { background: var(--pop-blue); color: #fff; }
+.pop-btn.peri { background: var(--pop-peri); color: var(--pop-ink); }
+.pop-btn.white { background: #fff; }
+
+.pop-tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-pop);
+  font-weight: 800;
+  font-size: 14px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 2.5px solid var(--pop-ink);
+  background: #fff;
+  color: var(--pop-ink);
+  box-shadow: var(--shadow-pop-sm);
+}
+.pop-tag.peri { background: var(--pop-peri); }
+.pop-tag.yellow { background: var(--pop-yellow); }
+.pop-tag.blue { background: var(--pop-blue); color: #fff; }
+
+.pop-h1 {
+  font-family: var(--font-pop);
+  font-weight: 900;
+  line-height: 1.05;
+  margin: 0;
+  font-size: clamp(34px, 6vw, 60px);
+  letter-spacing: 0.01em;
+}
+.pop-h2 {
+  font-family: var(--font-pop);
+  font-weight: 900;
+  margin: 0;
+  font-size: clamp(24px, 3.4vw, 34px);
+}
+.pop-eyebrow {
+  font-family: var(--font-pop);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--pop-peri-deep);
+}
+.hl {
+  background: linear-gradient(transparent 58%, var(--pop-yellow) 58%);
+  padding: 0 4px;
+  border-radius: 3px;
+}
+
+/* ---- nav ------------------------------------------------------------- */
+.pop-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px clamp(16px, 4vw, 40px);
+  background: var(--pop-peri);
+  border-bottom: 3px solid var(--pop-ink);
+}
+.pop-wordmark {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: clamp(15px, 2vw, 19px);
+  letter-spacing: 0.02em;
+  color: var(--pop-ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.pop-wordmark img {
+  width: 34px; height: 34px;
+  padding: 4px;
+  background: #fff;
+  border: 2.5px solid var(--pop-ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-pop-sm);
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .15s ease;
+}
+.pop-wordmark:hover img { transform: rotate(-12deg) scale(1.08); box-shadow: 4px 4px 0 var(--pop-ink); }
+.pop-wordmark .mark-wrap { position: relative; display: flex; align-items: center; }
+.pop-wordmark .mark-wrap::after {
+  content: ""; position: absolute; top: -3px; right: -3px;
+  width: 9px; height: 9px; border-radius: 999px;
+  background: var(--pop-blue); border: 2px solid var(--pop-ink);
+}
+.pop-navlinks { display: flex; gap: 8px; flex-wrap: wrap; }
+.pop-navlink {
+  font-family: var(--font-pop);
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 7px 15px;
+  border-radius: 999px;
+  border: 2.5px solid var(--pop-ink);
+  background: #fff;
+  color: var(--pop-ink);
+  box-shadow: var(--shadow-pop-sm);
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.pop-navlink:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--pop-ink); color: var(--pop-ink); }
+.pop-navlink:active { transform: translate(3px,3px); box-shadow: 0 0 0 var(--pop-ink); }
+.pop-navlink.is-active { background: var(--pop-yellow); }
+.pop-social { flex: 1 1 0; display: flex; justify-content: flex-end; gap: 8px; }
+.pop-social a {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2.5px solid var(--pop-ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pop-ink);
+  box-shadow: var(--shadow-pop-sm);
+  transition: transform .12s ease, box-shadow .12s ease;
+  text-decoration: none;
+}
+.pop-social a:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--pop-ink); color: var(--pop-ink); }
+
+/* ---- layout ---------------------------------------------------------- */
+.pop-main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(24px, 5vw, 56px) clamp(16px, 4vw, 32px) 80px;
+}
+
+/* ---- motion ---------------------------------------------------------- */
+@keyframes pop-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-14px) rotate(2deg); }
+}
+@keyframes pop-spin { to { transform: rotate(360deg); } }
+@keyframes pop-rise {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.float { animation: pop-float 4.2s ease-in-out infinite; }
+.burst { animation: pop-spin 18s linear infinite; }
+.rise { animation: pop-rise .5s cubic-bezier(.2,.8,.2,1) both; }
+.wobble { transition: transform .15s ease, box-shadow .15s ease; }
+.wobble:hover { transform: translate(-3px,-3px) rotate(-1deg); box-shadow: var(--shadow-pop-lg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .float, .burst, .rise { animation: none; }
+}
+
+a.cleanlink { color: var(--pop-blue); text-decoration: none; font-weight: 800; }
+a.cleanlink:hover { text-decoration: underline; }
+
+/* ---- typography ------------------------------------------------------ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-pop);
+  font-weight: 900;
+  margin: 0 0 0.5rem 0;
+  color: var(--pop-ink);
+  line-height: 1.2;
+}
+h1 { font-size: 2.4em; }
+h2 { font-size: 1.75em; }
+h3 { font-size: 1.5em; }
+h4 { font-size: 1.25em; }
+h5 { font-size: 1.15em; }
+strong, b { font-weight: 700; }
+a { color: var(--pop-blue); }
+a:hover { color: var(--pop-peri-deep); }
+p { font-size: 1em; margin: 0 0 1em; }
+
+textarea { width: 100%; font-size: 16px; }
+input { font-size: 16px; }
+table { width: 100%; }
+img { max-width: 100%; height: auto; }
+
+code {
+  padding: 2px 6px;
+  background-color: var(--pop-cream);
+  border: 1.5px solid var(--pop-ink);
+  border-radius: 4px;
+  font-size: 0.88em;
+}
+pre {
+  padding: 1.5em;
+  border-radius: 16px;
+  border: 3px solid var(--pop-ink);
+  box-shadow: var(--shadow-pop-sm);
+  overflow-x: auto;
+}
+pre > code { all: unset; }
+blockquote {
+  margin: 26px 0;
+  padding: 20px 24px;
+  background: var(--pop-yellow);
+  border: 3px solid var(--pop-ink);
+  border-radius: 20px;
+  box-shadow: var(--shadow-pop);
+  font-weight: 800;
+  font-size: 1.05em;
+  line-height: 1.7;
+}
+hr { border: none; border-top: 3px solid var(--pop-ink); margin: 24px 0; }
+
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .pop-social { display: none; }
+
+  /* compact header on phones */
+  .pop-nav { gap: 10px; padding: 8px 14px; }
+  .pop-wordmark { font-size: 15px; gap: 8px; }
+  .pop-wordmark img { width: 28px; height: 28px; padding: 3px; }
+  .pop-navlinks { gap: 6px; }
+  .pop-navlink { font-size: 13px; padding: 5px 11px; border-width: 2px; }
+}
+
+@media (max-width: 480px) {
+  /* one slim row: fixed wordmark + horizontally-scrolling links */
+  .pop-nav {
+    flex-wrap: nowrap;
+    gap: 8px;
+    padding: 5px 10px;
+  }
+  .pop-wordmark {
+    flex: 0 0 auto;
+    gap: 0;
+  }
+  /* icon only on phones — hide the site-name text to free up width */
+  .pop-wordmark span:last-child { display: none; }
+  .pop-wordmark img { width: 26px; height: 26px; padding: 2px; border-width: 2px; }
+  .pop-wordmark .mark-wrap::after { width: 7px; height: 7px; }
+  .pop-navlinks {
+    flex: 1 1 auto;
+    min-width: 0;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 5px;
+    /* overflow-x:auto は縦方向もクリップするため、ボタンの影ぶんの余白を確保 */
+    padding: 4px 6px 7px;
+  }
+  .pop-navlinks::-webkit-scrollbar { display: none; }
+  .pop-navlink { flex: 0 0 auto; font-size: 12.5px; padding: 4px 10px; }
+}
+
+.sr-only {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* 記事本文 */
+.pop-article-body {
+  padding: 28px clamp(22px, 5vw, 44px) 40px;
+  font-size: 18px;
+  line-height: 1.9;
+  font-weight: 600;
+}
+/* 数学(解答)記事は地の文をセリフ体にして、MathJax の数式と雰囲気を揃える */
+.pop-article-body.is-math {
+  font-family: "Times New Roman", "Noto Serif JP", serif;
+  font-weight: 400;
+}
+
+/* MathJax (SVG) コンテナの表示。別行立て数式($$)はブロック中央、はみ出しは横スクロール */
+/* line-height:0 が重要（無いとインライン数式がずれる／行送りが不均一になる） */
+mjx-container[jax="SVG"] {
+  display: inline-block;
+  line-height: 0;
+}
+mjx-container[jax="SVG"] > svg {
+  /* Tailwind Preflight の svg{display:block} を打ち消す（無いとインライン数式が
+     ブロック化して上にずれ、行送りも不自然になる）。SVG の vertical-align が効く */
+  display: inline-block;
+  overflow: visible;
+}
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}

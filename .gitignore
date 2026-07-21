@@ -1,0 +1,28 @@
+# build output
+dist/
+
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# TypeScript
+*.tsbuildinfo
+
+# logs
+npm-debug.log*
+
+# environment variables
+.env
+.env.*
+
+# editor / IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# tools
+.claude/
