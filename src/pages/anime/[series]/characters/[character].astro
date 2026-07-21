@@ -1,0 +1,58 @@
+---
+import { getCollection, render } from "astro:content";
+import BlogPost from "../../../../layouts/BlogPost.astro";
+import { leafSlug, ownerSlug, seriesSlug } from "../../../../lib/anime";
+
+export async function getStaticPaths() {
+    const characters = await getCollection("animeCharacters");
+    const allSeries = await getCollection("animeSeries");
+
+    return characters.map((character) => {
+        const slug = ownerSlug(character.id);
+        const series = allSeries.find((s) => seriesSlug(s.id) === slug);
+        return {
+            params: { series: slug, character: leafSlug(character.id) },
+            props: { character, seriesTitle: series?.data.title ?? slug },
+        };
+    });
+}
+
+const { character, seriesTitle } = Astro.props;
+const { name, originalName, role, voiceActor, voiceActorJa, description, image } =
+    character.data;
+const slug = ownerSlug(character.id);
+
+const { Content } = await render(character);
+
+const eyebrow = [originalName, role].filter(Boolean).join(" ／ ");
+
+// プロフィール行。値のないものは落とす。
+const profile: [string, string][] = [
+    ["原語版", voiceActor ?? ""],
+    ["日本語版", voiceActorJa ?? ""],
+].filter((row): row is [string, string] => Boolean(row[1]));
+---
+
+<BlogPost
+    title={name}
+    description={description}
+    heroImage={image}
+    tag={seriesTitle}
+    eyebrow={eyebrow}
+    backHref={`/anime/${slug}/characters/`}
+    backLabel="← キャラクター一覧へ戻る"
+>
+    {
+        profile.length > 0 && (
+            <dl style="display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 0 0 24px; font-weight: 700; font-size: 14px;">
+                {profile.map(([label, value]) => (
+                    <>
+                        <dt style="color: var(--pop-peri-deep);">{label}</dt>
+                        <dd style="margin: 0;">{value}</dd>
+                    </>
+                ))}
+            </dl>
+        )
+    }
+    <Content />
+</BlogPost>

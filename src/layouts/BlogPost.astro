@@ -1,35 +1,62 @@
 ---
-import type { CollectionEntry } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
 
-type Props = CollectionEntry<"blog">["data"];
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+type Props = {
+  title: string;
+  description: string;
+  pubDate?: Date;
+  updatedDate?: Date;
+  heroImage?: string;
+  // 戻り先とタグ。省略時はパスから推測する（blog / tech / math）。
+  // 階層の深いセクション（anime など）は呼び出し側で明示する。
+  tag?: string;
+  backHref?: string;
+  backLabel?: string;
+  // タイトルの上に出す小見出し（例: "シーズン 1 ・ 第 1 話"）
+  eyebrow?: string;
+};
+
+const {
+  title,
+  description,
+  pubDate,
+  updatedDate,
+  heroImage,
+  tag: tagProp,
+  backHref: backHrefProp,
+  backLabel: backLabelProp,
+  eyebrow,
+} = Astro.props;
 
 const pathname = Astro.url.pathname;
 const segments = pathname.split("/").filter(Boolean); // 例: ["math", "book-slug", "article"]
 const isMath = pathname.startsWith("/math");
 
-let backHref: string;
-let backLabel: string;
-let tag: string;
+let fallbackHref: string;
+let fallbackLabel: string;
+let fallbackTag: string;
 
-if (pathname.startsWith("/math")) {
+if (isMath) {
   // 数学記事は所属する参考書ページへ戻す
-  backHref = `/math/${segments[1]}`;
-  backLabel = "← 参考書へ戻る";
-  tag = "数学";
+  fallbackHref = `/math/${segments[1]}`;
+  fallbackLabel = "← 参考書へ戻る";
+  fallbackTag = "数学";
 } else if (pathname.startsWith("/tech")) {
-  backHref = "/tech";
-  backLabel = "← ものづくりへ戻る";
-  tag = "ものづくり";
+  fallbackHref = "/tech";
+  fallbackLabel = "← ものづくりへ戻る";
+  fallbackTag = "ものづくり";
 } else {
-  backHref = "/blog";
-  backLabel = "← ブログへ戻る";
-  tag = "日記";
+  fallbackHref = "/blog";
+  fallbackLabel = "← ブログへ戻る";
+  fallbackTag = "日記";
 }
+
+const backHref = backHrefProp ?? fallbackHref;
+const backLabel = backLabelProp ?? fallbackLabel;
+const tag = tagProp ?? fallbackTag;
 ---
 
 <html lang="ja">
@@ -46,15 +73,20 @@ if (pathname.startsWith("/math")) {
           style="background: var(--pop-peri); border-bottom: 3px solid var(--pop-ink); padding: 30px; text-align: center;"
         >
           <span class="pop-tag yellow">{tag}</span>
+          {eyebrow && (
+            <div style="font-weight: 800; font-size: 14px; margin-top: 12px;">{eyebrow}</div>
+          )}
           <h1 class="pop-h1" style="font-size: clamp(28px,5vw,44px); margin-top: 14px;">{title}</h1>
-          <div style="font-weight: 800; margin-top: 8px;">
-            <FormattedDate date={pubDate} />
-            {updatedDate && (
-              <span style="font-style: italic; font-weight: 700; font-size: 14px; margin-left: 8px;">
-                (更新: <FormattedDate date={updatedDate} />)
-              </span>
-            )}
-          </div>
+          {(pubDate || updatedDate) && (
+            <div style="font-weight: 800; margin-top: 8px;">
+              {pubDate && <FormattedDate date={pubDate} />}
+              {updatedDate && (
+                <span style="font-style: italic; font-weight: 700; font-size: 14px; margin-left: 8px;">
+                  (更新: <FormattedDate date={updatedDate} />)
+                </span>
+              )}
+            </div>
+          )}
           {heroImage && (
             <div style="margin-top: 22px; display: flex; justify-content: center;">
               <div
