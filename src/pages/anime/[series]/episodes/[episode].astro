@@ -1,0 +1,53 @@
+---
+import { getCollection, render } from "astro:content";
+import FormattedDate from "../../../../components/FormattedDate.astro";
+import BlogPost from "../../../../layouts/BlogPost.astro";
+import { leafSlug, ownerSlug, seriesSlug } from "../../../../lib/anime";
+
+export async function getStaticPaths() {
+    const episodes = await getCollection("animeEpisodes");
+    const allSeries = await getCollection("animeSeries");
+
+    return episodes.map((episode) => {
+        const slug = ownerSlug(episode.id);
+        const series = allSeries.find((s) => seriesSlug(s.id) === slug);
+        return {
+            params: { series: slug, episode: leafSlug(episode.id) },
+            props: { episode, seriesTitle: series?.data.title ?? slug },
+        };
+    });
+}
+
+const { episode, seriesTitle } = Astro.props;
+const { season, episode: episodeNo, originalTitle, airDate } = episode.data;
+const slug = ownerSlug(episode.id);
+const { Content } = await render(episode);
+
+const eyebrow = [
+    `シーズン ${season} ・ 第 ${episodeNo} 話`,
+    originalTitle && `原題: ${originalTitle}`,
+]
+    .filter(Boolean)
+    .join(" ／ ");
+---
+
+<BlogPost
+    title={episode.data.title}
+    description={episode.data.description}
+    pubDate={episode.data.pubDate}
+    updatedDate={episode.data.updatedDate}
+    heroImage={episode.data.heroImage}
+    tag={seriesTitle}
+    eyebrow={eyebrow}
+    backHref={`/anime/${slug}/`}
+    backLabel="← 作品ページへ戻る"
+>
+    {
+        airDate && (
+            <p style="font-weight: 700; font-size: 14px; color: var(--pop-peri-deep); margin-top: 0;">
+                初放送: <FormattedDate date={airDate} />
+            </p>
+        )
+    }
+    <Content />
+</BlogPost>
