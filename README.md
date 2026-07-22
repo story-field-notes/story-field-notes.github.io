@@ -1,18 +1,22 @@
-# Ishikawaのホームページ
+# 物語採集記
 
-とりあえずGitHub Pagesで公開する。
+ゲーム・漫画・映画・アニメから物語を探究し、その素晴らしさを紹介するサイト。
 
-https://ishikawa-masashi.github.io/
+https://story-field-notes.github.io/
 
-## 予定
+## 扱うもの
 
-- ホームページ
-- ブログ
-- プロジェクト紹介
+- 作品紹介
+- 登場キャラクター紹介
+- シーズンごとのエピソードレビュー
 
 ## 環境
 
 - Astro.js
+- GitHub Pages（`main` への push で [deploy.yml](.github/workflows/deploy.yml) が自動デプロイ）
+
+Organization の user site として公開しているためルート `/` 配信であり、
+`astro.config.mjs` に `base` は指定していない。
 
 ## アニメ紹介の追加方法
 

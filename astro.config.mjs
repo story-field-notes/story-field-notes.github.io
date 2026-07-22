@@ -6,7 +6,8 @@ import remarkMath from 'remark-math';
 import rehypeMathjax from 'rehype-mathjax';
 // https://astro.build/config
 export default defineConfig({
-  site: "https://ishikawa-masashi.github.io",
+  // Organization の user site として公開するためルート配信。base の指定は不要。
+  site: "https://story-field-notes.github.io",
   integrations: [mdx(), sitemap()],
   markdown: {
     remarkPlugins: [remarkMath],
