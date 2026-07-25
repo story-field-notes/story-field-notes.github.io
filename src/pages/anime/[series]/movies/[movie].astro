@@ -1,0 +1,60 @@
+---
+import { getCollection, render } from "astro:content";
+import FormattedDate from "../../../../components/FormattedDate.astro";
+import BlogPost from "../../../../layouts/BlogPost.astro";
+import { leafSlug, ownerSlug, seriesSlug } from "../../../../lib/anime";
+
+export async function getStaticPaths() {
+    const movies = await getCollection("animeMovies");
+    const allSeries = await getCollection("animeSeries");
+
+    return movies.map((movie) => {
+        const slug = ownerSlug(movie.id);
+        const series = allSeries.find((s) => seriesSlug(s.id) === slug);
+        return {
+            params: { series: slug, movie: leafSlug(movie.id) },
+            props: { movie, seriesTitle: series?.data.title ?? slug },
+        };
+    });
+}
+
+const { movie, seriesTitle } = Astro.props;
+const { originalTitle, releaseYear, releaseDate, runtime, director } = movie.data;
+const slug = ownerSlug(movie.id);
+const { Content } = await render(movie);
+
+const eyebrow = [
+    `劇場版 ・ ${releaseYear} 年`,
+    runtime && `${runtime} 分`,
+    originalTitle && `原題: ${originalTitle}`,
+]
+    .filter(Boolean)
+    .join(" ／ ");
+---
+
+<BlogPost
+    title={movie.data.title}
+    description={movie.data.description}
+    pubDate={movie.data.pubDate}
+    updatedDate={movie.data.updatedDate}
+    heroImage={movie.data.heroImage}
+    tag={seriesTitle}
+    eyebrow={eyebrow}
+    backHref={`/anime/${slug}/`}
+    backLabel="← 作品ページへ戻る"
+>
+    {
+        (director || releaseDate) && (
+            <p style="font-weight: 700; font-size: 14px; color: var(--pop-peri-deep); margin-top: 0;">
+                {director && <>監督: {director}</>}
+                {director && releaseDate && " ／ "}
+                {releaseDate && (
+                    <>
+                        本国公開: <FormattedDate date={releaseDate} />
+                    </>
+                )}
+            </p>
+        )
+    }
+    <Content />
+</BlogPost>

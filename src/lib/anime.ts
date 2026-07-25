@@ -14,6 +14,7 @@ export const REGION_ORDER = ["海外", "国内"] as const;
 
 type Series = CollectionEntry<"animeSeries">;
 type Episode = CollectionEntry<"animeEpisodes">;
+type Movie = CollectionEntry<"animeMovies">;
 
 /** 放送年の表示（例: "2012 - 2016", "2012 -"）。開始年がなければ空文字。 */
 export function formatYears(data: Series["data"]): string {
@@ -25,6 +26,14 @@ export function formatYears(data: Series["data"]): string {
     return `${yearStart}`;
   }
   return `${yearStart} - ${yearEnd ?? ""}`;
+}
+
+/** 劇場版の並び順。order が同じなら公開年の古い順。 */
+export function sortMovies(movies: Movie[]) {
+  return [...movies].sort(
+    (a, b) =>
+      a.data.order - b.data.order || a.data.releaseYear - b.data.releaseYear,
+  );
 }
 
 /**

@@ -126,6 +126,30 @@ const animeEpisodes = defineCollection({
 	}),
 });
 
+// 劇場版のレビュー。`src/content/anime/<作品スラッグ>/movies/*.md` に置く。
+// テレビシリーズ由来の映画はここに入れ、原作を持たない映画は扱わない。
+const animeMovies = defineCollection({
+	loader: glob({ base: "./src/content/anime/", pattern: "**/movies/*.md" }),
+	schema: z.object({
+		title: z.string(),
+		originalTitle: z.string().optional(),
+		description: z.string(),
+		// 本国での公開年。一覧は order → この年の順に並ぶ。
+		releaseYear: z.number(),
+		// 本国での公開日（判明している場合）
+		releaseDate: z.coerce.date().optional(),
+		// 上映時間（分）
+		runtime: z.number().optional(),
+		director: z.string().optional(),
+		// レビューを書いた日
+		pubDate: z.coerce.date(),
+		updatedDate: z.coerce.date().optional(),
+		heroImage: z.string().optional(),
+		// 一覧での並び順。小さいほど先。
+		order: z.number().default(0),
+	}),
+});
+
 // 登場キャラクターの紹介。`src/content/anime/<作品スラッグ>/characters/*.md` に置く。
 const animeCharacters = defineCollection({
 	loader: glob({ base: "./src/content/anime/", pattern: "**/characters/*.md" }),
@@ -153,5 +177,6 @@ export const collections = {
 	mathBooks,
 	animeSeries,
 	animeEpisodes,
+	animeMovies,
 	animeCharacters,
 };

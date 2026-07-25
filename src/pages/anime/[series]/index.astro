@@ -10,12 +10,14 @@ import {
     leafSlug,
     ownerSlug,
     seriesSlug,
+    sortMovies,
 } from "../../../lib/anime";
 
 export async function getStaticPaths() {
     const allSeries = await getCollection("animeSeries");
     const allEpisodes = await getCollection("animeEpisodes");
     const allCharacters = await getCollection("animeCharacters");
+    const allMovies = await getCollection("animeMovies");
 
     return allSeries.map((series) => {
         const slug = seriesSlug(series.id);
@@ -25,15 +27,16 @@ export async function getStaticPaths() {
         const characters = allCharacters
             .filter((c) => ownerSlug(c.id) === slug)
             .sort((a, b) => a.data.order - b.data.order);
+        const movies = sortMovies(allMovies.filter((m) => ownerSlug(m.id) === slug));
 
         return {
             params: { series: slug },
-            props: { series, seasons, characters },
+            props: { series, seasons, characters, movies },
         };
     });
 }
 
-const { series, seasons, characters } = Astro.props;
+const { series, seasons, characters, movies } = Astro.props;
 const slug = seriesSlug(series.id);
 const { title, originalTitle, region, country, studio, creator, status, genres, description, posterImage } =
     series.data;
@@ -240,6 +243,52 @@ const meta: [string, string][] = [
                                 </div>
                             </div>
                         ))}
+                    </section>
+                )
+            }
+
+            <!-- 劇場版 -->
+            {
+                movies.length > 0 && (
+                    <section style="margin-top: 44px;">
+                        <h2
+                            class="pop-h2 rise"
+                            style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;"
+                        >
+                            <span class="hl">劇場版</span>
+                            <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
+                                {movies.length} 本
+                            </span>
+                        </h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+                            {movies.map((m, i) => (
+                                <a
+                                    href={`/anime/${slug}/movies/${leafSlug(m.id)}/`}
+                                    class="sticker wobble rise"
+                                    style={`display: block; text-decoration: none; color: var(--pop-ink); overflow: hidden; animation-delay: ${i * 0.05}s;`}
+                                >
+                                    <div style="padding: 16px 20px 20px;">
+                                        <span
+                                            class="pop-tag"
+                                            style="font-size: 12px; padding: 3px 11px; background: #ffab5c;"
+                                        >
+                                            🎞 {m.data.releaseYear} 年
+                                        </span>
+                                        <h4 style="font-family: var(--font-pop); font-weight: 900; font-size: 19px; margin: 12px 0 2px;">
+                                            {m.data.title}
+                                        </h4>
+                                        {m.data.originalTitle && (
+                                            <div style="font-size: 12px; font-weight: 700; color: var(--pop-peri-deep); margin-bottom: 8px;">
+                                                {m.data.originalTitle}
+                                            </div>
+                                        )}
+                                        <p style="font-weight: 600; font-size: 14px; margin: 8px 0 0;">
+                                            {m.data.description}
+                                        </p>
+                                    </div>
+                                </a>
+                            ))}
+                        </div>
                     </section>
                 )
             }
