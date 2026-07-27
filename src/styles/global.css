@@ -19,6 +19,11 @@
   --board-edge: #8a6136;
   --chalk: #f3f4ee;
   --chalk-dim: rgba(243, 244, 238, 0.66);
+  /* 本文の幅と左右の余白。綴じのリングの位置決めもこの値から導く */
+  --content-max: 1080px;
+  --gutter-base: clamp(16px, 4vw, 32px);
+  /* 綴じにカードが被らないために必要な、紙の左端から本文までの距離 */
+  --gutter-rings: 112px;
   /* legacy compat */
   --accent: var(--pop-blue);
   --box-shadow: var(--shadow-pop);
@@ -54,6 +59,8 @@ svg {
 
 /* リングノートの紙面。左端に綴じのリング、その内側に赤い余白線、全体に横罫を敷く */
 body {
+  /* 横罫。狭い画面用の指定でも同じものを使う */
+  --ruled-lines: linear-gradient(rgba(153, 153, 238, 0.12) 1px, transparent 1px);
   background-color: #f7f4de;
   background-image: linear-gradient(
       90deg,
@@ -62,7 +69,7 @@ body {
       rgba(198, 96, 96, 0.3) 75px,
       transparent 75px
     ),
-    linear-gradient(rgba(153, 153, 238, 0.12) 1px, transparent 1px);
+    var(--ruled-lines);
   /* 横罫は repeat-y だけにして、幅と開始位置で左右の余白を作る。
      左は余白線（75px）の内側から、右は紙の端の手前で止める */
   background-repeat: no-repeat, repeat-y;
@@ -82,10 +89,7 @@ body {
 
 @media screen and (max-width: 767px) {
   body {
-    background-image: linear-gradient(
-      rgba(153, 153, 238, 0.12) 1px,
-      transparent 1px
-    );
+    background-image: var(--ruled-lines);
     background-repeat: repeat-y;
     background-position: 20px 0;
     background-size: calc(100% - 40px) 20px;
@@ -97,25 +101,39 @@ body {
    左端は containing block からビューポート左端まで戻して置く
    （--rings-inset は containing block が本文の内側にある場合の補正） */
 .rings {
+  /* リング 1 個ぶんの大きさ（ring.svg の実寸）と、上下に空ける間隔 */
+  --ring-w: 64px;
+  --ring-h: 48px;
+  --ring-gap: 28px;
   position: relative;
 }
 .rings::before {
   content: "";
   position: absolute;
   z-index: -1;
-  top: 28px;
-  /* 下端が途中で切れるとリングの穴が欠けるため、高さをリング 1 個ぶん（48px）の
-     倍数に切り下げて、最後のリングを丸ごと収める。round() が使えない環境では
-     この宣言が捨てられ、bottom による従来の指定にそのまま戻る */
-  bottom: 28px;
-  height: round(down, calc(100% - 56px), 48px);
-  width: 64px;
+  top: var(--ring-gap);
+  bottom: var(--ring-gap);
+  width: var(--ring-w);
   left: calc(
-    -1 * (100vw - min(1080px, 100vw)) / 2 - var(--rings-inset, 0px)
+    -1 * (100vw - min(var(--content-max), 100vw)) / 2 -
+      var(--rings-inset, 0px)
   );
   background-image: url(/ring.svg);
   background-repeat: repeat-y;
-  background-size: 64px 48px;
+  background-size: var(--ring-w) var(--ring-h);
+}
+/* 下端が途中で切れるとリングの穴が欠けるため、高さをリング 1 個ぶんの倍数に
+   切り下げて最後のリングを丸ごと収める。round() が無い環境では上の
+   top / bottom による指定のまま */
+@supports (height: round(down, 1px, 1px)) {
+  .rings::before {
+    bottom: auto;
+    height: round(
+      down,
+      calc(100% - 2 * var(--ring-gap)),
+      var(--ring-h)
+    );
+  }
 }
 /* 綴じの幅を確保できない画面幅では出さない（横罫だけにする） */
 @media screen and (max-width: 767px) {
@@ -514,22 +532,28 @@ body {
 
 /* ---- layout ---------------------------------------------------------- */
 .pop-main {
-  /* 左の余白。全幅セクション（トップのヒーロー）が食い込み量を計算するのに使う */
-  --gutter-left: clamp(16px, 4vw, 32px);
-  max-width: 1080px;
+  /* 綴じを避けるために余分に空ける量。全幅セクション（トップのヒーロー）は
+     これを引き戻して画面幅に合わせる */
+  --gutter-extra: 0px;
+  max-width: var(--content-max);
   margin: 0 auto;
-  padding: clamp(24px, 5vw, 56px) clamp(16px, 4vw, 32px) 80px;
-  padding-left: var(--gutter-left);
+  padding: clamp(24px, 5vw, 56px) var(--gutter-base) 80px;
+  padding-left: calc(var(--gutter-base) + var(--gutter-extra));
 }
-/* 綴じのリングにカードや付箋が被らないよう、紙の左端から最低 112px 空ける。
-   中央寄せで空く余白（(100vw - 1080px) / 2）を差し引き、足りないぶんだけ
-   右へ押し出す。画面が広いときは通常の padding に戻る。
+/* 綴じのリングにカードや付箋が被らないよう、紙の左端から最低 --gutter-rings
+   空ける。中央寄せで空く余白を差し引き、足りないぶんだけ右へ押し出す。
+   画面が広ければ 0 になり、通常の padding に戻る。
    リングを出さない 767px 以下は対象外 */
 @media screen and (min-width: 768px) {
   .pop-main {
-    --gutter-left: max(
-      clamp(16px, 4vw, 32px),
-      calc(112px - max(0px, (100vw - 1080px) / 2))
+    --gutter-extra: max(
+      0px,
+      calc(
+        var(--gutter-rings) - var(--gutter-base) - max(
+            0px,
+            (100vw - var(--content-max)) / 2
+          )
+      )
     );
   }
 }
