@@ -1,0 +1,24 @@
+---
+// 付箋＋マスキングテープ風の見出し。
+// テープは .hdg の疑似要素で描いており、位置決めの基準に .fusen-3 の
+// position: relative を使う。そのためこの 2 つは必ず入れ子で使うこと。
+// 見出しの中身（アイコン・eyebrow・h1・リード文）は呼び出し側から渡す。
+
+type Props = {
+  /** 付箋の外側に足すインラインスタイル。下余白の調整などに使う。 */
+  style?: string;
+  /** "sm" は節見出し用。付箋が小さいぶんテープも小さくする。 */
+  size?: "md" | "sm";
+};
+
+const { style, size = "md" } = Astro.props;
+---
+
+<div class="fusen-3" style={style}>
+  <header
+    class:list={["rise", "hdg", { "hdg-sm": size === "sm" }]}
+    style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap; width: fit-content; margin-inline: auto;"
+  >
+    <slot />
+  </header>
+</div>
