@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseHead from "../../components/BaseHead.astro";
 import Footer from "../../components/Footer.astro";
 import Header from "../../components/Header.astro";
+import PageHeading from "../../components/PageHeading.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 
 // 参考書スラッグ = `_book.md` の id から末尾の `/_book` を除いたもの
@@ -46,10 +47,7 @@ const fields = [...booksByField.entries()].sort(
         <Header />
         <main class="pop-main">
             <!-- page header -->
-            <header
-                class="rise"
-                style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 34px;"
-            >
+            <PageHeading style="margin-bottom: 34px;">
                 <img
                     src="/ishikawa.svg"
                     alt=""
@@ -63,21 +61,23 @@ const fields = [...booksByField.entries()].sort(
                         参考書ごとの解説ノート
                     </p>
                 </div>
-            </header>
+            </PageHeading>
 
             <!-- 分野ごとのセクション -->
             {
                 fields.map(([field, fieldBooks]) => (
                     <section style="margin-bottom: 44px;">
-                        <h2
-                            class="pop-h2 rise"
-                            style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;"
-                        >
-                            <span class="hl">{field}</span>
-                            <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
-                                {fieldBooks.length} 冊
-                            </span>
-                        </h2>
+                        <PageHeading size="sm" style="margin-bottom: 20px;">
+                            <h2
+                                class="pop-h2"
+                                style="display: flex; align-items: center; gap: 12px; padding: 10px 18px;"
+                            >
+                                <span class="hl">{field}</span>
+                                <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
+                                    {fieldBooks.length} 冊
+                                </span>
+                            </h2>
+                        </PageHeading>
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 440px)); gap: 20px; justify-content: start;">
                             {fieldBooks.map((book, i) => {
                                 const slug = bookSlug(book.id);

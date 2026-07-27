@@ -4,6 +4,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
+import PageHeading from "../components/PageHeading.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
 interface Props {
@@ -35,16 +36,13 @@ const cardTagOf = (post: CollectionEntry<"blog" | "tech" | "math">) =>
     <main class="pop-main">
 
       <!-- page header -->
-      <header
-        class="rise"
-        style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 34px;"
-      >
+      <PageHeading style="margin-bottom: 34px;">
         <img src="/ishikawa.svg" alt="" class="float" style="width: 76px; height: 76px;" />
         <div>
           <span class="pop-eyebrow">{sub}</span>
           <h1 class="pop-h1"><span class="hl">{title}</span></h1>
         </div>
-      </header>
+      </PageHeading>
 
       <!-- cards -->
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
