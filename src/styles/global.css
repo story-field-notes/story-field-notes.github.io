@@ -187,6 +187,12 @@ body {
   background-color: #fafafa;
   color: #333333;
   width: fit-content;
+  /* 見出しの下余白。呼び出し側で個別に指定すると、今回のように付け忘れて
+     次の見出しとくっつくため、付箋自身に持たせる */
+  margin-bottom: 34px;
+}
+.fusen-3.fusen-sm {
+  margin-bottom: 20px;
 }
 
 /* 左下と右上に敷く影。紙が両端で浮いているように見せる */

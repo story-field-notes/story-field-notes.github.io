@@ -47,7 +47,7 @@ const fields = [...booksByField.entries()].sort(
         <Header />
         <main class="pop-main">
             <!-- page header -->
-            <PageHeading style="margin-bottom: 34px;">
+            <PageHeading>
                 <img
                     src="/ishikawa.svg"
                     alt=""
@@ -67,7 +67,7 @@ const fields = [...booksByField.entries()].sort(
             {
                 fields.map(([field, fieldBooks]) => (
                     <section style="margin-bottom: 44px;">
-                        <PageHeading size="sm" style="margin-bottom: 20px;">
+                        <PageHeading size="sm">
                             <h2
                                 class="pop-h2"
                                 style="display: flex; align-items: center; gap: 12px;"

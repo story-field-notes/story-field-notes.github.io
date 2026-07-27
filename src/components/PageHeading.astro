@@ -5,21 +5,19 @@
 // 見出しの中身（アイコン・eyebrow・h1・リード文）は呼び出し側から渡す。
 
 type Props = {
-  /** 付箋の外側に足すインラインスタイル。下余白の調整などに使う。 */
-  style?: string;
   /**
-   * 付箋の大きさ。内側の余白とテープの大きさが変わる。
-   * - "md": アイコン + 見出し + リード文だけのページ見出し（余白なし）
+   * 付箋の大きさ。内側の余白・テープの大きさ・下余白が変わる。
+   * - "md": アイコン + 見出し + リード文だけのページ見出し（内側の余白なし）
    * - "lg": メタ情報まで載せる大きい付箋（作品ページ・参考書ページ）
-   * - "sm": 節見出し。テープを小さくする
+   * - "sm": 節見出し。テープを小さくし、下余白も詰める
    */
   size?: "md" | "lg" | "sm";
 };
 
-const { style, size = "md" } = Astro.props;
+const { size = "md" } = Astro.props;
 ---
 
-<div class="fusen-3" style={style}>
+<div class:list={["fusen-3", { "fusen-sm": size === "sm" }]}>
   <header
     class:list={[
       "rise",
