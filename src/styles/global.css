@@ -14,6 +14,11 @@
   --shadow-pop-sm: 3px 3px 0 var(--pop-ink);
   /* 付箋の裏に敷く影の色。.sticker と .fusen-3 で共通 */
   --fusen-shadow: #d0d0d0;
+  /* 黒板（ヘッダー・フッター） */
+  --board-bg: #26382e;
+  --board-edge: #8a6136;
+  --chalk: #f3f4ee;
+  --chalk-dim: rgba(243, 244, 238, 0.66);
   /* legacy compat */
   --accent: var(--pop-blue);
   --box-shadow: var(--shadow-pop);
@@ -47,24 +52,76 @@ svg {
   display: block;
 }
 
+/* リングノートの紙面。左端に綴じのリング、その内側に赤い余白線、全体に横罫を敷く */
 body {
   background-color: #f7f4de;
-  background-image:
-    /* linear-gradient(rgba(153, 153, 238, 0.7) 1.5px, transparent 1.5px), */
-    /* linear-gradient(90deg, rgba(153,153,238,.7) 1.5px, transparent 1.5px), */ linear-gradient(
-    rgba(153, 153, 238, 0.12) 1px,
-    transparent 1px
-  );
-  /* linear-gradient(90deg, rgba(153,153,238,.25) 1px, transparent 1px); */
+  background-image: linear-gradient(
+      90deg,
+      transparent 74px,
+      rgba(198, 96, 96, 0.3) 74px,
+      rgba(198, 96, 96, 0.3) 75px,
+      transparent 75px
+    ),
+    linear-gradient(rgba(153, 153, 238, 0.12) 1px, transparent 1px);
+  /* 横罫は repeat-y だけにして、幅と開始位置で左右の余白を作る。
+     左は余白線（75px）の内側から、右は紙の端の手前で止める */
+  background-repeat: no-repeat, repeat-y;
+  background-position:
+    0 0,
+    96px 0;
   background-size:
-    20px 20px,
-    20px 20px;
+    100% 100%,
+    calc(100% - 144px) 20px;
   font-family: var(--font-pop);
   color: var(--pop-ink);
   font-size: 16px;
   line-height: 1.7;
   word-wrap: break-word;
   overflow-wrap: break-word;
+}
+
+@media screen and (max-width: 767px) {
+  body {
+    background-image: linear-gradient(
+      rgba(153, 153, 238, 0.12) 1px,
+      transparent 1px
+    );
+    background-repeat: repeat-y;
+    background-position: 20px 0;
+    background-size: calc(100% - 40px) 20px;
+  }
+}
+
+/* 綴じのリング。body の背景にすると上下に際限なく伸びてヘッダー・フッターに
+   めり込むため、領域を持つ要素に敷いて上下に間隔を空ける。
+   左端は containing block からビューポート左端まで戻して置く
+   （--rings-inset は containing block が本文の内側にある場合の補正） */
+.rings {
+  position: relative;
+}
+.rings::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 28px;
+  /* 下端が途中で切れるとリングの穴が欠けるため、高さをリング 1 個ぶん（48px）の
+     倍数に切り下げて、最後のリングを丸ごと収める。round() が使えない環境では
+     この宣言が捨てられ、bottom による従来の指定にそのまま戻る */
+  bottom: 28px;
+  height: round(down, calc(100% - 56px), 48px);
+  width: 64px;
+  left: calc(
+    -1 * (100vw - min(1080px, 100vw)) / 2 - var(--rings-inset, 0px)
+  );
+  background-image: url(/ring.svg);
+  background-repeat: repeat-y;
+  background-size: 64px 48px;
+}
+/* 綴じの幅を確保できない画面幅では出さない（横罫だけにする） */
+@media screen and (max-width: 767px) {
+  .rings::before {
+    display: none;
+  }
 }
 
 /* ---- building blocks ------------------------------------------------- */
@@ -314,6 +371,23 @@ body {
 }
 
 /* ---- nav ------------------------------------------------------------- */
+/* 黒板の板面。うっすらチョークの拭き跡を敷き、下辺を木枠に見せる。
+   ヘッダーとフッターで共通 */
+.board {
+  background-color: var(--board-bg);
+  background-image: radial-gradient(
+      ellipse at 18% 28%,
+      rgba(255, 255, 255, 0.05),
+      transparent 46%
+    ),
+    radial-gradient(
+      ellipse at 72% 66%,
+      rgba(255, 255, 255, 0.038),
+      transparent 42%
+    );
+  color: var(--chalk);
+}
+
 .pop-nav {
   position: sticky;
   top: 0;
@@ -323,8 +397,8 @@ body {
   justify-content: space-between;
   gap: 16px;
   padding: 12px clamp(16px, 4vw, 40px);
-  background: var(--pop-peri);
-  border-bottom: 3px solid var(--pop-ink);
+  border-bottom: 8px solid var(--board-edge);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 .pop-wordmark {
   flex: 1 1 0;
@@ -334,7 +408,9 @@ body {
   font-weight: 900;
   font-size: clamp(15px, 2vw, 19px);
   letter-spacing: 0.02em;
-  color: var(--pop-ink);
+  color: var(--chalk);
+  /* チョークで書いた字のわずかな滲み */
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -342,17 +418,14 @@ body {
   width: 34px;
   height: 34px;
   padding: 4px;
-  background: #fff;
-  border: 2.5px solid var(--pop-ink);
+  /* 白丸だとシールを貼ったように浮くので、チョークで描いた円の中に置く */
+  background: rgba(243, 244, 238, 0.12);
+  border: 2.5px solid rgba(243, 244, 238, 0.75);
   border-radius: 999px;
-  box-shadow: var(--shadow-pop-sm);
-  transition:
-    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.15s ease;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .pop-wordmark:hover img {
   transform: rotate(-12deg) scale(1.08);
-  box-shadow: 4px 4px 0 var(--pop-ink);
 }
 .pop-wordmark .mark-wrap {
   position: relative;
@@ -368,13 +441,14 @@ body {
   height: 9px;
   border-radius: 999px;
   background: var(--pop-blue);
-  border: 2px solid var(--pop-ink);
+  border: 2px solid var(--chalk);
 }
 .pop-navlinks {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
+/* チョークで板に書いた項目。囲みは現在地だけに引く */
 .pop-navlink {
   font-family: var(--font-pop);
   font-weight: 800;
@@ -382,28 +456,23 @@ body {
   cursor: pointer;
   padding: 7px 15px;
   border-radius: 999px;
-  border: 2.5px solid var(--pop-ink);
-  background: #fff;
-  color: var(--pop-ink);
-  box-shadow: var(--shadow-pop-sm);
+  border: 2.5px solid transparent;
+  background: transparent;
+  color: var(--chalk-dim);
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.4);
   transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease,
-    background 0.12s ease;
+    color 0.12s ease,
+    border-color 0.12s ease;
   white-space: nowrap;
   text-decoration: none;
 }
 .pop-navlink:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 var(--pop-ink);
-  color: var(--pop-ink);
-}
-.pop-navlink:active {
-  transform: translate(3px, 3px);
-  box-shadow: 0 0 0 var(--pop-ink);
+  color: var(--chalk);
+  border-color: rgba(243, 244, 238, 0.4);
 }
 .pop-navlink.is-active {
-  background: var(--pop-yellow);
+  color: var(--chalk);
+  border-color: var(--chalk);
 }
 .pop-social {
   flex: 1 1 0;
@@ -415,29 +484,54 @@ body {
   width: 38px;
   height: 38px;
   border-radius: 999px;
-  background: #fff;
-  border: 2.5px solid var(--pop-ink);
+  background: transparent;
+  border: 2.5px solid rgba(243, 244, 238, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--pop-ink);
-  box-shadow: var(--shadow-pop-sm);
+  color: var(--chalk-dim);
   transition:
-    transform 0.12s ease,
-    box-shadow 0.12s ease;
+    color 0.12s ease,
+    border-color 0.12s ease;
   text-decoration: none;
 }
 .pop-social a:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 var(--pop-ink);
-  color: var(--pop-ink);
+  color: var(--chalk);
+  border-color: var(--chalk);
+}
+
+/* 黒板のフッター。上辺を木枠にして、ヘッダーと上下で挟む */
+.pop-footer {
+  border-top: 8px solid var(--board-edge);
+  box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.4);
+  margin-top: 40px;
+}
+.pop-footer .chalk-sub {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--chalk-dim);
 }
 
 /* ---- layout ---------------------------------------------------------- */
 .pop-main {
+  /* 左の余白。全幅セクション（トップのヒーロー）が食い込み量を計算するのに使う */
+  --gutter-left: clamp(16px, 4vw, 32px);
   max-width: 1080px;
   margin: 0 auto;
   padding: clamp(24px, 5vw, 56px) clamp(16px, 4vw, 32px) 80px;
+  padding-left: var(--gutter-left);
+}
+/* 綴じのリングにカードや付箋が被らないよう、紙の左端から最低 112px 空ける。
+   中央寄せで空く余白（(100vw - 1080px) / 2）を差し引き、足りないぶんだけ
+   右へ押し出す。画面が広いときは通常の padding に戻る。
+   リングを出さない 767px 以下は対象外 */
+@media screen and (min-width: 768px) {
+  .pop-main {
+    --gutter-left: max(
+      clamp(16px, 4vw, 32px),
+      calc(112px - max(0px, (100vw - 1080px) / 2))
+    );
+  }
 }
 
 /* ---- motion ---------------------------------------------------------- */

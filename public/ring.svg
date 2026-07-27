@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="48" viewBox="0 0 64 48">
+  <!-- リングノートの綴じ 1 個ぶん。縦に繰り返して綴じに見せる。
+       打ち抜かれた穴の上を、紙の左端を巻き込んだワイヤーが通り、穴の中で終わる。
+       穴（直径 18）はワイヤー（太さ 7）より大きくして、周囲に穴の縁が見えるようにする -->
+  <defs>
+    <linearGradient id="wire" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e6eaee" />
+      <stop offset="0.45" stop-color="#b3bac2" />
+      <stop offset="1" stop-color="#868e97" />
+    </linearGradient>
+  </defs>
+
+  <!-- 打ち抜かれた穴。紙の縁を明るく、内側を暗く落とす -->
+  <ellipse cx="44" cy="24" rx="9" ry="9" fill="#efeada" />
+  <ellipse cx="44" cy="24.7" rx="7.6" ry="7.6" fill="rgba(21,19,31,0.32)" />
+
+  <!-- 紙に落ちるワイヤーの影 -->
+  <path
+    d="M2 37 C 16 37, 26 28, 42 27"
+    fill="none"
+    stroke="rgba(21,19,31,0.18)"
+    stroke-width="7"
+    stroke-linecap="round"
+  />
+  <!-- ワイヤー本体。穴の上を通り、穴の中心で終わる -->
+  <path
+    d="M2 34 C 16 34, 26 25, 44 24"
+    fill="none"
+    stroke="url(#wire)"
+    stroke-width="7"
+    stroke-linecap="round"
+  />
+</svg>
