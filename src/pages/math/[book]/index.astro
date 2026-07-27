@@ -60,8 +60,8 @@ const { title, author, publisher, series, isbn, description } = book.data;
             >
                 ← 数学（参考書一覧）へ
             </a>
-            <PageHeading style="margin-bottom: 30px;">
-                <div style="padding: 22px 26px;">
+            <PageHeading size="lg" style="margin-bottom: 30px;">
+                <div>
                 <h1 class="pop-h1"><span class="hl">{title}</span></h1>
                 {
                     (author || publisher) && (
@@ -103,7 +103,7 @@ const { title, author, publisher, series, isbn, description } = book.data;
                         <PageHeading size="sm" style="margin-bottom: 18px;">
                             <h2
                                 class="pop-h2"
-                                style="display: flex; align-items: baseline; gap: 12px; padding: 10px 18px;"
+                                style="display: flex; align-items: baseline; gap: 12px;"
                             >
                                 <span class="pop-tag" style="background: var(--pop-peri);">
                                     第{ch.chapter}章
@@ -116,7 +116,7 @@ const { title, author, publisher, series, isbn, description } = book.data;
                                 <a
                                     href={`/math/${post.id}/`}
                                     class="sticker wobble rise"
-                                    style={`display: block; text-decoration: none; color: var(--pop-ink); overflow: hidden; animation-delay: ${i * 0.06}s;`}
+                                    style={`display: block; text-decoration: none; color: var(--pop-ink); animation-delay: ${i * 0.06}s;`}
                                 >
                                     <div style="padding: 16px 20px 20px;">
                                         {post.data.sectionLabel && (

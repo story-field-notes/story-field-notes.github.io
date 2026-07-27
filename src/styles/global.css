@@ -12,9 +12,8 @@
   --shadow-pop: 5px 5px 0 var(--pop-ink);
   --shadow-pop-lg: 8px 8px 0 var(--pop-ink);
   --shadow-pop-sm: 3px 3px 0 var(--pop-ink);
-  /* 付箋（カード）の影。右下だけに落として紙が浮いているように見せる */
-  --shadow-fusen: 6px 7px 9px -3px rgba(21, 19, 31, 0.28);
-  --shadow-fusen-lg: 10px 12px 16px -4px rgba(21, 19, 31, 0.3);
+  /* 付箋の裏に敷く影の色。.sticker と .fusen-3 で共通 */
+  --fusen-shadow: #d0d0d0;
   /* legacy compat */
   --accent: var(--pop-blue);
   --box-shadow: var(--shadow-pop);
@@ -69,14 +68,53 @@ body {
 }
 
 /* ---- building blocks ------------------------------------------------- */
-/* 見出し以外のカード（作品・エピソード・キャラ・記事など）。
-   見出しの付箋と揃えて、枠線と角丸を持たない紙にする。テープは付けず、
-   右下に落ちる影だけで浮きを表現する */
+/* 見出し以外のカード（作品・エピソード・キャラ・記事など）。見出しの付箋と同じく、
+   紙の裏に敷いたぼかしで浮きを出す。.fusen-3 と違いテープは付けず右下だけ浮かせる。
+   この影は「親がスタッキングコンテキストを作っていない」ことが前提で紙の下に潜るため、
+   .sticker に transform を足すと影が紙の上に乗る（.rise / .wobble の扱いを参照） */
 .sticker {
+  position: relative;
   background: #fff;
   border: none;
   border-radius: 0;
-  box-shadow: var(--shadow-fusen);
+}
+.sticker::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  right: 5px;
+  bottom: -5px;
+  width: 70%;
+  height: 50%;
+  transform: rotate(5deg);
+  background-color: var(--fusen-shadow);
+  filter: blur(4px);
+}
+
+/* rise の実行中だけは影を隠す。カードには animation-delay が入るため、
+   遅延ぶんも含めて隠れるように長めに取る */
+.sticker.rise::before {
+  animation: fusen-shadow-in 1s step-end backwards;
+}
+@keyframes fusen-shadow-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+/* ホバー時は影を少し大きく・ぼかして、紙が持ち上がったように見せる。
+   ずらす量は bottom ではなく transform に載せる（bottom はフレームごとに
+   レイアウトが走るが、transform はコンポジタだけで処理できる） */
+.sticker.wobble::before {
+  transition:
+    transform 0.18s ease,
+    filter 0.18s ease;
+}
+.sticker.wobble:hover::before {
+  transform: translateY(4px) rotate(5deg) scale(1.04);
+  filter: blur(6px);
 }
 
 .pop-btn {
@@ -146,138 +184,98 @@ body {
   display: flex;
   align-items: center;
   position: relative;
-  /* width: 240px; */
-  /* height: 240px; */
-  /* padding: 2em 2.2em; */
   background-color: #fafafa;
   color: #333333;
   width: fit-content;
 }
 
-/* --- 左下の影 --- */
-.fusen-3::before {
-  content: "";
-  position: absolute;
-  bottom: -1px; /* 下側に配置 */
-  left: -1px; /* 左側に配置 */
-  z-index: -1;
-  transform: rotate(1deg); /* 左下に自然に馴染む傾き */
-  width: 40%;
-  height: 50%;
-  background-color: #d0d0d0;
-  filter: blur(2px);
-}
-
-/* --- 右上の影 --- */
+/* 左下と右上に敷く影。紙が両端で浮いているように見せる */
+.fusen-3::before,
 .fusen-3::after {
   content: "";
   position: absolute;
-  top: -1px; /* 上側に配置 ★変更 */
-  right: -1px; /* 右側に配置 */
   z-index: -1;
-  transform: rotate(-1deg); /* 右上に馴染む傾き ★変更 */
   width: 40%;
   height: 50%;
-  background-color: #d0d0d0;
+  background-color: var(--fusen-shadow);
   filter: blur(2px);
+}
+.fusen-3::before {
+  bottom: -1px;
+  left: -1px;
+  transform: rotate(1deg);
+}
+.fusen-3::after {
+  top: -1px;
+  right: -1px;
+  transform: rotate(-1deg);
 }
 
 .hdg {
   background-color: white;
 }
 
+/* テープの寸法と、付箋の角からのはみ出し量。位置決めのルールは 1 組だけにして、
+   大きさの違い（ページ見出し / 節見出し、PC / スマートフォン）はこの変数で切り替える */
+.hdg {
+  --tape-w: 6.25vw;
+  --tape-h: 4.1015625vw;
+  --tape-out-y: -1.46484375vw;
+  --tape-out-x: -2.44140625vw;
+}
+/* 節見出し（登場キャラクター・エピソードレビューなど）用の小さい付箋。
+   ページ見出しと同じテープでは付箋より大きくなって文字に被るため縮める */
+.hdg.hdg-sm {
+  --tape-w: 3.4vw;
+  --tape-h: 2.23vw;
+  --tape-out-y: -0.8vw;
+  --tape-out-x: -1.33vw;
+  padding: 10px 18px;
+}
+/* メタ情報まで載せる大きい付箋（作品ページ・参考書ページ） */
+.hdg.hdg-lg {
+  padding: 22px 26px;
+}
+
 .hdg::after,
 .hdg::before {
   content: "";
   position: absolute;
+  width: var(--tape-w);
+  height: var(--tape-h);
   background-image: url(/tape.svg);
   background-repeat: no-repeat;
   background-size: contain;
 }
+.hdg::before {
+  top: var(--tape-out-y);
+  left: var(--tape-out-x);
+}
+.hdg::after {
+  bottom: var(--tape-out-y);
+  right: var(--tape-out-x);
+}
 
 @media screen and (max-width: 767px) {
   .hdg {
-    /* 幅を固定すると、メタ情報を含む大きい付箋（作品ページ・参考書ページ）が
-       狭い幅に押し込められて縦に伸びる。上限だけ決めて中身に追従させる。
-       テープが端からはみ出す分、90vw までに留める */
+    /* 幅を固定すると、メタ情報を含む大きい付箋が狭い幅に押し込められて縦に伸びる。
+       上限だけ決めて中身に追従させる。テープが端からはみ出す分 90vw に留める */
     width: auto;
     max-width: 90vw;
     font-size: 4.533333333333333vw;
     line-height: 1.470588235294118;
     letter-spacing: 0.02em;
     font-weight: 900;
+    --tape-w: 13.866666666666665vw;
+    --tape-h: 10.133333333333333vw;
+    --tape-out-y: -4.266666666666667vw;
+    --tape-out-x: -5.333333333333334vw;
   }
-}
-
-@media screen and (min-width: 768px) {
-  .hdg::after,
-  .hdg::before {
-    width: 6.25vw;
-    height: 4.1015625vw;
-  }
-}
-@media screen and (min-width: 768px) {
-  .hdg::after {
-    bottom: -1.46484375vw;
-    right: -2.44140625vw;
-  }
-}
-@media screen and (min-width: 768px) {
-  .hdg::before {
-    top: -1.46484375vw;
-    left: -2.44140625vw;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .hdg::before {
-    top: -4.266666666666667vw;
-    left: -5.333333333333334vw;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .hdg::after {
-    bottom: -4.266666666666667vw;
-    right: -5.333333333333334vw;
-  }
-}
-@media screen and (max-width: 767px) {
-  .hdg::after,
-  .hdg::before {
-    width: 13.866666666666665vw;
-    height: 10.133333333333333vw;
-  }
-}
-
-/* 節見出し（登場キャラクター・エピソードレビューなど）用の小さい付箋。
-   ページ見出しと同じテープでは付箋より大きくなって文字に被るため縮める */
-.hdg.hdg-sm::after,
-.hdg.hdg-sm::before {
-  width: 3.4vw;
-  height: 2.23vw;
-}
-.hdg.hdg-sm::before {
-  top: -0.8vw;
-  left: -1.33vw;
-}
-.hdg.hdg-sm::after {
-  bottom: -0.8vw;
-  right: -1.33vw;
-}
-@media screen and (max-width: 767px) {
-  .hdg.hdg-sm::after,
-  .hdg.hdg-sm::before {
-    width: 7.5vw;
-    height: 5.5vw;
-  }
-  .hdg.hdg-sm::before {
-    top: -2.3vw;
-    left: -2.9vw;
-  }
-  .hdg.hdg-sm::after {
-    bottom: -2.3vw;
-    right: -2.9vw;
+  .hdg.hdg-sm {
+    --tape-w: 7.5vw;
+    --tape-h: 5.5vw;
+    --tape-out-y: -2.3vw;
+    --tape-out-x: -2.9vw;
   }
 }
 
@@ -456,9 +454,12 @@ body {
     opacity: 0;
     transform: translateY(22px);
   }
+  /* translateY(0) ではなく none にする。fill-mode: both で最終キーフレームが
+     residual に残るため、transform が付いたままだと要素がスタッキング
+     コンテキストを作り続け、付箋の影（z-index: -1）が紙の下に潜れなくなる */
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
   }
 }
 @keyframes pop-pulse {
@@ -477,18 +478,16 @@ body {
 .burst {
   animation: pop-spin 18s linear infinite;
 }
+/* fill-mode を both にすると、アニメーション終了後も最終キーフレームが適用され続け、
+   ブラウザは要素をスタッキングコンテキストとして扱い続ける。すると付箋の影
+   （.sticker::before の z-index: -1）が紙の下に潜れず、上に乗ってしまう。
+   最終状態は素の状態（opacity: 1 / transform: none）と同じなので backwards で足りる */
 .rise {
-  animation: pop-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: pop-rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
-.wobble {
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease;
-}
-.wobble:hover {
-  transform: translate(-3px, -3px) rotate(-1deg);
-  box-shadow: var(--shadow-fusen-lg);
-}
+/* カードのホバー。transform で動かすとカードがスタッキングコンテキストになり、
+   付箋の影（z-index: -1）が紙の上に出てしまうため、position: relative の top で
+   持ち上げる。影の変化は .sticker.wobble::before 側で受け持つ */
 
 @media (prefers-reduced-motion: reduce) {
   .float,

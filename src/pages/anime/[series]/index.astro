@@ -73,8 +73,8 @@ const meta: [string, string][] = [
                 ← アニメ（作品一覧）へ
             </a>
 
-            <PageHeading style="margin-bottom: 30px;">
-                <div style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; padding: 22px 26px;">
+            <PageHeading size="lg" style="margin-bottom: 30px;">
+                <div style="display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap;">
                     <div style="flex: 1 1 320px; min-width: 0;">
                         <h1 class="pop-h1"><span class="hl">{title}</span></h1>
 
@@ -124,7 +124,7 @@ const meta: [string, string][] = [
             </PageHeading>
 
             <!-- 作品紹介本文 -->
-            <section class="sticker rise" style="overflow: hidden; margin-bottom: 34px;">
+            <section class="sticker rise" style="margin-bottom: 34px;">
                 <div class="pop-article-body">
                     <Content />
                 </div>
@@ -137,7 +137,7 @@ const meta: [string, string][] = [
                         <PageHeading size="sm" style="margin-bottom: 20px;">
                             <h2
                                 class="pop-h2"
-                                style="display: flex; align-items: center; gap: 12px; padding: 10px 18px;"
+                                style="display: flex; align-items: center; gap: 12px;"
                             >
                                 <span class="hl">登場キャラクター</span>
                                 <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
@@ -195,7 +195,7 @@ const meta: [string, string][] = [
                         <PageHeading size="sm" style="margin-bottom: 20px;">
                             <h2
                                 class="pop-h2"
-                                style="display: flex; align-items: center; gap: 12px; padding: 10px 18px;"
+                                style="display: flex; align-items: center; gap: 12px;"
                             >
                                 <span class="hl">エピソードレビュー</span>
                                 <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
@@ -222,7 +222,7 @@ const meta: [string, string][] = [
                                         <a
                                             href={`/anime/${slug}/episodes/${leafSlug(ep.id)}/`}
                                             class="sticker wobble rise"
-                                            style={`display: block; text-decoration: none; color: var(--pop-ink); overflow: hidden; animation-delay: ${i * 0.05}s;`}
+                                            style={`display: block; text-decoration: none; color: var(--pop-ink); animation-delay: ${i * 0.05}s;`}
                                         >
                                             <div style="padding: 16px 20px 20px;">
                                                 <span
@@ -259,7 +259,7 @@ const meta: [string, string][] = [
                         <PageHeading size="sm" style="margin-bottom: 20px;">
                             <h2
                                 class="pop-h2"
-                                style="display: flex; align-items: center; gap: 12px; padding: 10px 18px;"
+                                style="display: flex; align-items: center; gap: 12px;"
                             >
                                 <span class="hl">劇場版</span>
                                 <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
@@ -272,7 +272,7 @@ const meta: [string, string][] = [
                                 <a
                                     href={`/anime/${slug}/movies/${leafSlug(m.id)}/`}
                                     class="sticker wobble rise"
-                                    style={`display: block; text-decoration: none; color: var(--pop-ink); overflow: hidden; animation-delay: ${i * 0.05}s;`}
+                                    style={`display: block; text-decoration: none; color: var(--pop-ink); animation-delay: ${i * 0.05}s;`}
                                 >
                                     <div style="padding: 16px 20px 20px;">
                                         <span

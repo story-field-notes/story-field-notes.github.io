@@ -67,7 +67,7 @@ const regions = [...byRegion.entries()].sort((a, b) => rank(a[0]) - rank(b[0]));
             <PageHeading size="sm" style="margin-bottom: 20px;">
               <h2
                 class="pop-h2"
-                style="display: flex; align-items: center; gap: 12px; padding: 10px 18px;"
+                style="display: flex; align-items: center; gap: 12px;"
               >
                 <span class="hl">{region}アニメ</span>
                 <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
@@ -83,7 +83,7 @@ const regions = [...byRegion.entries()].sort((a, b) => rank(a[0]) - rank(b[0]));
                   <a
                     href={`/anime/${slug}/`}
                     class="sticker wobble rise"
-                    style={`display: flex; align-items: stretch; text-decoration: none; color: var(--pop-ink); overflow: hidden; min-height: 176px; animation-delay: ${i * 0.06}s;`}
+                    style={`display: flex; align-items: stretch; text-decoration: none; color: var(--pop-ink); min-height: 176px; animation-delay: ${i * 0.06}s;`}
                   >
                     <div style="padding: 16px 20px; flex: 1 1 auto; min-width: 0;">
                       <span
