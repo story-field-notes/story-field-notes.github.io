@@ -160,7 +160,11 @@ body {
   right: 5px;
   bottom: -5px;
   width: 70%;
-  height: 50%;
+  /* 高さは 5° 回転してもカードの内側（右 5px）に収まる範囲で頭打ちにする。
+     記事のように縦長のカードだと 50% が数百 px になり、回転で横にはみ出して
+     ページ全体に横スクロールが出る。見えるのは下端だけなので上限を付けても
+     影の見た目は変わらない */
+  height: min(50%, 110px);
   transform: rotate(5deg);
   background-color: var(--fusen-shadow);
   filter: blur(4px);
