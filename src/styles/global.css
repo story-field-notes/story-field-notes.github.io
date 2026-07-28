@@ -292,17 +292,30 @@ body {
   transform: rotate(-1deg);
 }
 
+/* 見出しの紙。中身（アイコン + 見出しのかたまり）を横に並べる。
+   並べ方をここに持たせるのは、狭い画面での折り返しをメディアクエリで変えるため
+   （呼び出し側のインラインスタイルに置くと上書きできない） */
 .hdg {
   background-color: white;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  width: fit-content;
+  margin-inline: auto;
 }
 
-/* テープの寸法と、付箋の角からのはみ出し量。位置決めのルールは 1 組だけにして、
-   大きさの違い（ページ見出し / 節見出し、PC / スマートフォン）はこの変数で切り替える */
+/* テープの寸法と付箋の角からのはみ出し量、および紙の内側の余白。位置決めと余白の
+   ルールは 1 組だけにして、大きさの違い（ページ見出し / 節見出し、PC /
+   スマートフォン）はこの変数で切り替える */
 .hdg {
   --tape-w: 6.25vw;
   --tape-h: 4.1015625vw;
   --tape-out-y: -1.46484375vw;
   --tape-out-x: -2.44140625vw;
+  --hdg-pad-y: 16px;
+  --hdg-pad-x: 24px;
+  padding: var(--hdg-pad-y) var(--hdg-pad-x);
 }
 /* 節見出し（登場キャラクター・エピソードレビューなど）用の小さい付箋。
    ページ見出しと同じテープでは付箋より大きくなって文字に被るため縮める */
@@ -311,11 +324,17 @@ body {
   --tape-h: 2.23vw;
   --tape-out-y: -0.8vw;
   --tape-out-x: -1.33vw;
-  padding: 10px 18px;
+  --hdg-pad-y: 10px;
+  --hdg-pad-x: 18px;
 }
 /* メタ情報まで載せる大きい付箋（作品ページ・参考書ページ） */
 .hdg.hdg-lg {
-  padding: 22px 26px;
+  --hdg-pad-y: 22px;
+  --hdg-pad-x: 26px;
+}
+/* リード文の下マージンが内側の余白に足されて下だけ広く見えるため落とす */
+.hdg p:last-child {
+  margin-bottom: 0;
 }
 
 .hdg::after,
@@ -343,10 +362,9 @@ body {
        上限だけ決めて中身に追従させる。テープが端からはみ出す分 90vw に留める */
     width: auto;
     max-width: 90vw;
-    font-size: 4.533333333333333vw;
-    line-height: 1.470588235294118;
-    letter-spacing: 0.02em;
-    font-weight: 900;
+    /* リード文が長いとアイコンが単独行に落ちて付箋が倍の高さになる。
+       狭い画面では折り返さず、アイコンの横で文章のほうを折り返させる */
+    flex-wrap: nowrap;
     --tape-w: 13.866666666666665vw;
     --tape-h: 10.133333333333333vw;
     --tape-out-y: -4.266666666666667vw;

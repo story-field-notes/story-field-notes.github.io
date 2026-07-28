@@ -2,6 +2,7 @@
 // 付箋＋マスキングテープ風の見出し。
 // テープは .hdg の疑似要素で描いており、位置決めの基準に .fusen-3 の
 // position: relative を使う。そのためこの 2 つは必ず入れ子で使うこと。
+// 中身の並べ方（横並び・折り返し）は .hdg 側の CSS が持つ。
 // 見出しの中身（アイコン・eyebrow・h1・リード文）は呼び出し側から渡す。
 
 type Props = {
@@ -24,7 +25,6 @@ const { size = "md" } = Astro.props;
       "hdg",
       { "hdg-sm": size === "sm", "hdg-lg": size === "lg" },
     ]}
-    style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap; width: fit-content; margin-inline: auto;"
   >
     <slot />
   </header>
