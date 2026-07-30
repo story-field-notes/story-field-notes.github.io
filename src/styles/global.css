@@ -60,9 +60,13 @@ svg {
 /* リングノートの紙面。左端に綴じのリング、その内側に赤い余白線、全体に横罫を敷く */
 body {
   /* 横罫。狭い画面用の指定でも同じものを使う */
-  --ruled-lines: linear-gradient(rgba(153, 153, 238, 0.12) 1px, transparent 1px);
+  --ruled-lines: linear-gradient(
+    rgba(153, 153, 238, 0.12) 1px,
+    transparent 1px
+  );
   background-color: #f7f4de;
-  background-image: linear-gradient(
+  background-image:
+    linear-gradient(
       90deg,
       transparent 74px,
       rgba(198, 96, 96, 0.3) 74px,
@@ -115,8 +119,7 @@ body {
   bottom: var(--ring-gap);
   width: var(--ring-w);
   left: calc(
-    -1 * (100vw - min(var(--content-max), 100vw)) / 2 -
-      var(--rings-inset, 0px)
+    -1 * (100vw - min(var(--content-max), 100vw)) / 2 - var(--rings-inset, 0px)
   );
   background-image: url(/ring.svg);
   background-repeat: repeat-y;
@@ -128,11 +131,7 @@ body {
 @supports (height: round(down, 1px, 1px)) {
   .rings::before {
     bottom: auto;
-    height: round(
-      down,
-      calc(100% - 2 * var(--ring-gap)),
-      var(--ring-h)
-    );
+    height: round(down, calc(100% - 2 * var(--ring-gap)), var(--ring-h));
   }
 }
 /* 綴じの幅を確保できない画面幅では出さない（横罫だけにする） */
@@ -415,7 +414,8 @@ body {
    ヘッダーとフッターで共通 */
 .board {
   background-color: var(--board-bg);
-  background-image: radial-gradient(
+  background-image:
+    radial-gradient(
       ellipse at 18% 28%,
       rgba(255, 255, 255, 0.05),
       transparent 46%
@@ -571,10 +571,8 @@ body {
     --gutter-extra: max(
       0px,
       calc(
-        var(--gutter-rings) - var(--gutter-base) - max(
-            0px,
-            (100vw - var(--content-max)) / 2
-          )
+        var(--gutter-rings) - var(--gutter-base) -
+          max(0px, (100vw - var(--content-max)) / 2)
       )
     );
   }
