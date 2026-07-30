@@ -207,14 +207,14 @@ const meta: [string, string][] = [
                         {seasons.map((s) => (
                             <div style="margin-bottom: 36px;">
                                 <h3
-                                    class="pop-h2"
-                                    style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; font-size: 22px;"
+                                    class="fusen-2"
+                                    style="margin-bottom: 16px; font-size: 22px;"
                                 >
-                                    <span class="pop-tag" style="background: var(--pop-peri);">
-                                        シーズン {s.season}
-                                    </span>
+                                    <span class="hl">シーズン {s.season}</span>
                                     {s.title && s.title !== `シーズン ${s.season}` && (
-                                        <span class="hl">{s.title}</span>
+                                        <span style="margin-left: 10px; font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
+                                            {s.title}
+                                        </span>
                                     )}
                                 </h3>
                                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
