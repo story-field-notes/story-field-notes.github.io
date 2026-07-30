@@ -67,17 +67,12 @@ const regions = [...byRegion.entries()].sort((a, b) => rank(a[0]) - rank(b[0]));
       {
         regions.map(([region, list]) => (
           <section style="margin-bottom: 44px;">
-            <PageHeading size="sm">
-              <h2
-                class="pop-h2"
-                style="display: flex; align-items: center; gap: 12px;"
-              >
-                <span class="hl">{region}アニメ</span>
-                <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
-                  {list.length} 作品
-                </span>
-              </h2>
-            </PageHeading>
+            <h2 class="fusen-2" style="margin-bottom: 20px;">
+              <span class="hl">{region}アニメ</span>
+              <span style="font-size: 15px; font-weight: 700; color: var(--pop-peri-deep);">
+                {list.length} 作品
+              </span>
+            </h2>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 440px)); gap: 20px; justify-content: start;">
               {list.map((series, i) => {
                 const slug = seriesSlug(series.id);
